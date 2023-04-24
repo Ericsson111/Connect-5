@@ -18,30 +18,31 @@ Guest = 'X'
 player_dict = {0: 'O', 1: 'X'}
 player_name = {0: 'Player', 1: 'Guest'}
 
-# Define Match Winner
-matchWinner = ''
-
 # Define Win Condition
 class check_win():
-      # playerID: 0 or 1
-      # player_cord = [3,4] 
-      def check_row_column(playerID: int, player_cord: list):
-            global matchWinner
-            current_player = player_name[playerID]
-            rowID = int(player_cord[0]) 
-            colID = int(player_cord[1])
+      matchWinner = ''
+  
+      def __init__(self, playerID, row, column):
+          self.playerID = int(playerID)  
+          self.row = int(row)
+          self.col = int(column)
+        
+      def check_row_column(self):
+            rowID = self.row
+            colID = self.col
             Game_Board_Row = Game_Board[rowID]
             Game_Board_Col = [Game_Board[rowID][colID] for rowID in range(0, 11)]
             
             for scanID in range(11 - 4): 
                 combinedRowChar = ''.join(Game_Board_Row[scanID:scanID+5])
                 combinedColChar = ''.join(Game_Board_Col[scanID:scanID+5]) 
-                if combinedRowChar == player_dict[playerID] * 5 or combinedColChar == player_dict[playerID] * 5:
-                    matchWinner = current_player
+                if combinedRowChar == player_dict[self.playerID] * 5 or combinedColChar == player_dict[self.playerID] * 5:
+                    self.matchWinner = player_name[self.playerID]
 
-      def diagonal_positiveSlope(playerID: int, player_cord: list):
-            row = int(player_cord[0]) # Y-value 
-            col = int(player_cord[1]) # X-value 
+      def check_diagonal(self):
+            # Diagonal Positive Slope
+            row = self.row
+            col = self.col
 
             # Define points on positive slope
             rightUpCord = []
@@ -82,11 +83,10 @@ class check_win():
             combined_set = rightDownSet.union(rightUpSet)
             combined_list = [list(x) for x in combined_set]
             poscombined_list = sorted(combined_list, key=lambda x: x[0])
-            return poscombined_list
 
-      def diagonal_negativeSlope(playerID: int, player_cord: list):
-            row = int(player_cord[0]) # Y-value 
-            col = int(player_cord[1]) # X-value 
+            # Diagonal Negative Slope
+            row = self.row
+            col = self.col
             
             # Define points on positive slope
             leftUpCord = []
@@ -126,28 +126,21 @@ class check_win():
             combined_set = leftUpCord.union(rightDownCord)
             combined_list = [list(x) for x in combined_set]
             negcombined_list = sorted(combined_list, key=lambda x: x[0])
-            return negcombined_list
-      
-      def check_diagonal(playerID: int, player_cord: list):
-            global matchWinner
-            # Lists contained all coordiantes for the points
-            posSlopeArr = check_win.diagonal_positiveSlope(playerID, player_cord)
-            negSlopeArr = check_win.diagonal_negativeSlope(playerID, player_cord)
 
             # Define Player
-            current_player = player_name[playerID]
+            current_player = player_name[self.playerID]
 
             # Define lists to store point value
-            posSlopeVal = [Game_Board[cord[0]][cord[1]] for cord in posSlopeArr]
-            negSLopeVal = [Game_Board[cord[0]][cord[1]] for cord in negSlopeArr]
+            posSlopeVal = [Game_Board[cord[0]][cord[1]] for cord in poscombined_list]
+            negSLopeVal = [Game_Board[cord[0]][cord[1]] for cord in negcombined_list]
             for scanID in range(11 - 4):
                 combinedRowChar = ''.join(posSlopeVal[scanID:scanID+5])
-                if combinedRowChar == player_dict[playerID] * 5:
-                    matchWinner = current_player
+                if combinedRowChar == player_dict[self.playerID] * 5:
+                    self.matchWinner = current_player
             for scanID in range(11 - 4): 
                 combinedRowChar = ''.join(negSLopeVal[scanID:scanID+5]) 
-                if combinedRowChar == player_dict[playerID] * 5:
-                    matchWinner = current_player
+                if combinedRowChar == player_dict[self.playerID] * 5:
+                    self.matchWinner = player_name[self.playerID]
 
 # Display Board
 def display_board(board):
@@ -203,12 +196,13 @@ def GamePlay():
     for playerID in gameTurn:  # 0, 1, 0, 1
         moveCord = play_move(playerID)  # Coordinate of user's piece
         display_board(Game_Board)
-        # Check Win Condition
-        check_win.check_row_column(playerID, moveCord)
-        check_win.check_diagonal(playerID, moveCord)
-        if matchWinner != '':
+        # Check Win Condition\
+        checkWin = check_win(playerID, moveCord[0], moveCord[1])
+        checkWin.check_row_column()
+        checkWin.check_diagonal()
+        if checkWin.matchWinner != '':
             clearBoard()
-            print("{} Wins!".format(matchWinner))
+            print("{} Wins!".format(checkWin.matchWinner))
             rematch = input("Do you want to play again?: ")
             if rematch in ['Yes', 'yes', 'ye', 'y']:
                 return GamePlay()
@@ -216,7 +210,7 @@ def GamePlay():
                 GameMenu() 
             print('---------------Game Over---------------')
             break 
-    if matchWinner == '':
+    if checkWin.matchWinner == '':
         clearBoard()
         print("Tie Game!")
         rematch = input("Do you want to play again?: ")
