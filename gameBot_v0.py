@@ -85,7 +85,8 @@ class GameBot():
             ArraysCoordinates[CoordinatesOfArray] = possibleArrays[routeArrayID]
         print("CoordinatesArrayName:",CoordinatesArrayName)
         print("ArraysCoordinates:",ArraysCoordinates)
-        
+        for id in range(len(possibleArrays)):
+            print(possibleArraysName[id],": ",possibleArrays[id])
         # Objective: Sort arrays by the numberof Player's pieces it contains
 
         # Step: If Player's piece is less or equal to 2 on every array
@@ -116,9 +117,54 @@ class GameBot():
                 maximumArray.append(possibleArrays[arrayID])
         
         if len(maximumArray) == 1: # No duplication on the maximum Player's pieces val
+    
             # Use the given maximum array to find the two end point
-            pass 
+            currentArray = maximumArray[0]
+            for arrayScanID in range(len(currentArray)):
 
+                targetArray = []
+                targetArrayCoordinates = []
+                for coordinates, array in ArraysCoordinates.items(): # Find the coordinates of the given array
+                    if array == currentArray:
+                        targetArray = str(array)
+                        targetArrayCoordinates = coordinates
+
+            maximumLength = 0 
+            startingPoint = []
+            endingPoint = [] 
+            targetArray = eval(targetArray)
+            targetArrayCoordinates = eval(targetArrayCoordinates)
+            for charScanID in range(len(targetArray)):
+
+                if targetArray[charScanID] == 'O': # If it's Player's piece
+                    phaseLength = 0
+                    for playerScanID in range(charScanID, len(targetArray)):
+                        if targetArray[playerScanID] == 'O':
+                            phaseLength += 1
+                        elif targetArray[playerScanID] == 'X' or targetArray[playerScanID] == ' ':
+                            if phaseLength > maximumLength: 
+                                maximumLength = phaseLength
+                                startingPoint = targetArrayCoordinates[charScanID]
+                                endingPoint = targetArrayCoordinates[playerScanID-1]
+                            break
+            BotInterceptionPoint1 = targetArrayCoordinates.index(startingPoint) - 1 # The point before the Player's connection begins
+            BotInterceptionPoint2 = targetArrayCoordinates.index(endingPoint) + 1 # The point after the Player's connection begin
+            potentialBotPiecesPlacement = [targetArrayCoordinates[BotInterceptionPoint1], targetArrayCoordinates[BotInterceptionPoint2]]
+            
+            if targetArrayCoordinates[BotInterceptionPoint1] == "X": 
+                # If starting point has been occupied by Bot's piece
+                # The otherside(end-point) should be empty
+                potentialBotPiecesPlacement.remove(targetArrayCoordinates[BotInterceptionPoint1]) # Remove from possible move
+            if targetArrayCoordinates[BotInterceptionPoint2] == "X":
+                potentialBotPiecesPlacement.remove(targetArrayCoordinates[BotInterceptionPoint2]) # Remove from possible move
+
+            # Objective: Determine the most opimized coordinate for Bot's piece placement
+            if len(potentialBotPiecesPlacement) == 1:
+                return potentialBotPiecesPlacement[0]
+            elif len(potentialBotPiecesPlacement) > 1:
+                choiceID = random.randint(0, 1)
+                print("potentialBotPiecesPlacement[choiceID]:",potentialBotPiecesPlacement[choiceID])
+                return potentialBotPiecesPlacement[choiceID]
         else:
         
             print("maximumArray:",maximumArray)
@@ -144,8 +190,6 @@ class GameBot():
             
             
             if len(minimumBotPiecesArray) > 1:
-                maximumSectionLength = 0
-                maximumSectionLengthArray = []
                 for arrayScanID in range(len(minimumBotPiecesArray)):
 
                     targetArray = []
@@ -269,9 +313,9 @@ def Find_Coordinates_Of_Arrays(PlayerCoordinate: list, ArrayType: str):
     if ArrayType == "Horizontal":
         # Given the "ArrayType" of "Horizontal"
         # The coordinates could simply be found with the "row" value provided within the "PlayerCoordinate"
-        coordinateArray = [[rowVal, colVal] for colVal in [i for i in range(1, 11)]]
+        coordinateArray = [[rowVal, colVal] for colVal in [i for i in range(0, 11)]]
     elif ArrayType == "Vertical":
-        coordinateArray = [[rowVal, colVal] for rowVal in [i for i in range(1, 11)]]
+        coordinateArray = [[rowVal, colVal] for rowVal in [i for i in range(0, 11)]]
     elif ArrayType == "PositiveDiagonal":
         rightUpCord = []
         leftDownCord = []
@@ -335,8 +379,3 @@ def Find_Coordinates_Of_Arrays(PlayerCoordinate: list, ArrayType: str):
 
 
 Gamebot = GameBot()
-Gamebot.Identify_Player_Possible_Routes([' ', ' ', ' ', ' ', 'O', 'O', 'X', ' ', ' ', ' ', ' '],
-[' ', 'O', ' ', ' ', ' ', 'O', 'X', 'O', ' ', ' ', ' '],
-[' ', ' ', ' ', 'O', 'O', 'O', ' ', 'X', ' ', ' '],
-[' ', ' ', ' ', ' ', 'O', ' ', ' ', ' ', ' ', ' '],
-[4,5])
