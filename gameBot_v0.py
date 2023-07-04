@@ -85,10 +85,6 @@ class GameBot():
             ArraysCoordinates[CoordinatesOfArray] = possibleArrays[routeArrayID]
         print("CoordinatesArrayName:",CoordinatesArrayName)
         print("ArraysCoordinates:",ArraysCoordinates)
-        print("-" * 50)
-        
-        for arrayID in range(4):
-            print(possibleArraysName[arrayID],":",possibleArrays[arrayID])
         
         # Objective: Sort arrays by the numberof Player's pieces it contains
 
@@ -125,6 +121,8 @@ class GameBot():
 
         else:
         
+            print("maximumArray:",maximumArray)
+            print("possibleArraysValue:",possibleArraysValue)
             # If no duplication arrays
             # Step: Now the dictionary only consists of the values with maximum amount of Player's pieces in an array
             #       -> possibleArraysValue dictionary has been cleaned
@@ -137,6 +135,7 @@ class GameBot():
             minimumBotPiecesArray = []
             for arrayScanID in range(len(maximumArray)): # The amount of array that must be passed through
                 BotPiecesCount = len(list(filter(lambda x: x == 'X', maximumArray[arrayScanID]))) 
+                print("Array:",maximumArray[arrayScanID], " | ", "BotPiecesCount:",BotPiecesCount)
                 if BotPiecesCount == minimumBotPiecesCount:
                     minimumBotPiecesArray.append(maximumArray[arrayScanID])
 
@@ -148,13 +147,17 @@ class GameBot():
                 maximumSectionLength = 0
                 maximumSectionLengthArray = []
                 for arrayScanID in range(len(minimumBotPiecesArray)):
+
                     targetArray = []
                     targetArrayCoordinates = []
+                    print("----coordinates----")
                     for coordinates, array in ArraysCoordinates.items(): # Find the coordinates of the given array
+                        print("coordinates:", coordinates, " | ", "array:", array)
                         if array == minimumBotPiecesArray[arrayScanID]:
+                            print("selected: ", "coordinates:", coordinates, " | ", "array:", array)
                             targetArray = str(array)
                             targetArrayCoordinates = coordinates
-
+                    print("--------")
 
                     currentArray = minimumBotPiecesArray[arrayScanID]
                     maximumLength = 0 
@@ -163,6 +166,8 @@ class GameBot():
 
                     targetArray = eval(targetArray)
                     targetArrayCoordinates = eval(targetArrayCoordinates)
+                    print("targetArray:", targetArray, type(targetArray))
+                    print("targetArrayCoordinates:", targetArrayCoordinates, type(targetArrayCoordinates))
 
                     for arrayScanID in range(len(targetArray)):
                         if targetArray[arrayScanID] == 'O':  # If it's Player's piece
@@ -180,7 +185,10 @@ class GameBot():
                             print("phaseLength:", phaseLength, " | ", "maximumLength:", maximumLength)
                             print("Starting:", startingPoint, " | ", "endingPoint:", endingPoint)
                             print("-"*50)
-
+                                
+                    print("targetArray1:", targetArray, type(targetArray))
+                    print("targetArrayCoordinates1:", targetArrayCoordinates, type(targetArrayCoordinates))
+                    
                 print("minimumBotPiecesArray:", minimumBotPiecesArray)
             
 
@@ -325,4 +333,10 @@ def Find_Coordinates_Of_Arrays(PlayerCoordinate: list, ArrayType: str):
         coordinateArray = sorted([list(x) for x in combined_set], key=lambda x: x[0])
     return coordinateArray
 
+
 Gamebot = GameBot()
+Gamebot.Identify_Player_Possible_Routes([' ', ' ', ' ', ' ', 'O', 'O', 'X', ' ', ' ', ' ', ' '],
+[' ', 'O', ' ', ' ', ' ', 'O', 'X', 'O', ' ', ' ', ' '],
+[' ', ' ', ' ', 'O', 'O', 'O', ' ', 'X', ' ', ' '],
+[' ', ' ', ' ', ' ', 'O', ' ', ' ', ' ', ' ', ' '],
+[4,5])
