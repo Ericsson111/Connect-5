@@ -85,6 +85,10 @@ class GameBot():
             ArraysCoordinates[CoordinatesOfArray] = possibleArrays[routeArrayID]
         print("CoordinatesArrayName:",CoordinatesArrayName)
         print("ArraysCoordinates:",ArraysCoordinates)
+        print("-" * 50)
+        
+        for arrayID in range(4):
+            print(possibleArraysName[arrayID],":",possibleArrays[arrayID])
         
         # Objective: Sort arrays by the numberof Player's pieces it contains
 
@@ -121,8 +125,6 @@ class GameBot():
 
         else:
         
-            print("maximumArray:",maximumArray)
-            print("possibleArraysValue:",possibleArraysValue)
             # If no duplication arrays
             # Step: Now the dictionary only consists of the values with maximum amount of Player's pieces in an array
             #       -> possibleArraysValue dictionary has been cleaned
@@ -135,125 +137,114 @@ class GameBot():
             minimumBotPiecesArray = []
             for arrayScanID in range(len(maximumArray)): # The amount of array that must be passed through
                 BotPiecesCount = len(list(filter(lambda x: x == 'X', maximumArray[arrayScanID]))) 
-                print("Array:",maximumArray[arrayScanID], " | ", "BotPiecesCount:",BotPiecesCount)
                 if BotPiecesCount == minimumBotPiecesCount:
                     minimumBotPiecesArray.append(maximumArray[arrayScanID])
 
             # If both array contains the same amount of Player's pieces and Bot's pieces
             # Step: Determine which array consists more threats -> Find the array with greatest section connection
+            
+            
             if len(minimumBotPiecesArray) > 1:
                 maximumSectionLength = 0
                 maximumSectionLengthArray = []
                 for arrayScanID in range(len(minimumBotPiecesArray)):
+                    targetArray = []
+                    targetArrayCoordinates = []
+                    for coordinates, array in ArraysCoordinates.items(): # Find the coordinates of the given array
+                        if array == minimumBotPiecesArray[arrayScanID]:
+                            targetArray = str(array)
+                            targetArrayCoordinates = coordinates
+
+
                     currentArray = minimumBotPiecesArray[arrayScanID]
                     maximumLength = 0 
                     startingPoint = []
                     endingPoint = [] 
 
-                    for charScanID in range(len(minimumBotPiecesArray)):
-                        if currentArray[charScanID] == 'O': # If it's Player's piece
-                            # Certainly the one before is either empty or Bot piece, because the if statement did not pass through
-                            # Step: Add the placement previous into "potentialBotPiecesPlacement" for future check 
-                            # Step: Since the Player's piece would usually be connected together
-                            # Step: Loop through the array and find where it ends 
+                    targetArray = eval(targetArray)
+                    targetArrayCoordinates = eval(targetArrayCoordinates)
 
-                            # The array could be potentially have two or more different sections that consists of one or more Player's pieces
-                            # The Objective is to find the section of Player's pieces with the greatest length
+                    for arrayScanID in range(len(targetArray)):
+                        if targetArray[arrayScanID] == 'O':  # If it's Player's piece
                             phaseLength = 0
-                            for playerScanID in range(arrayScanID, len(currentArray)):
-                                if currentArray[playerScanID] == 'O':
+                            for playerScanID in range(arrayScanID, len(targetArray)):
+                                if targetArray[playerScanID] == 'O':
                                     phaseLength += 1
-                                elif currentArray[playerScanID] == 'X' or currentArray[playerScanID] == ' ':
-                                    if phaseLength > maximumLength: 
+                                elif targetArray[playerScanID] == 'X' or targetArray[playerScanID] == ' ':
+                                    if phaseLength > maximumLength:
                                         maximumLength = phaseLength
                                         startingPoint = targetArrayCoordinates[arrayScanID]
-                                        endingPoint = targetArrayCoordinates[playerScanID-1]
+                                        endingPoint = targetArrayCoordinates[playerScanID - 1]
                                     break
-                    # Compare to the maximumSectionLength
-                    if maximumLength > maximumSectionLength:
-                        maximumSectionLength = maximumLength
-                        maximumSectionLengthArray.append()
-                    print("maximumLength:", maximumLength)
+        
+                            print("phaseLength:", phaseLength, " | ", "maximumLength:", maximumLength)
+                            print("Starting:", startingPoint, " | ", "endingPoint:", endingPoint)
+                            print("-"*50)
 
-            print("minimumBotPiecesArray:", minimumBotPiecesArray)
+                print("minimumBotPiecesArray:", minimumBotPiecesArray)
+            
+
+            else: # Only one array left
+                maximumLength = 0 
+                startingPoint = []
+                endingPoint = [] 
+                for charScanID in range(len(currentArray)):
+
+                    if currentArray[charScanID] == 'O': # If it's Player's piece
+                        phaseLength = 0
+                        for playerScanID in range(charScanID, len(currentArray)):
+                            if currentArray[playerScanID] == 'O':
+                                phaseLength += 1
+                            elif currentArray[playerScanID] == 'X' or currentArray[playerScanID] == ' ':
+                                if phaseLength > maximumLength: 
+                                    maximumLength = phaseLength
+                                    startingPoint = targetArrayCoordinates[charScanID]
+                                    endingPoint = targetArrayCoordinates[playerScanID-1]
+                                break
+        
             # Objective: Determine the two coordinates of the two end-point
             # Step: Given the array with minimum amount of the Bot's Pieces
             # Step: Find the two coordinates on end of Player's pieces within the array
 
-            targetArray = []
-            targetArrayCoordinates = []
-            print("----coordinates----")
-            for coordinates, array in ArraysCoordinates.items(): # Find the coordinates of the given array
-                print("coordinates:", coordinates, " | ", "array:", array)
-                if array == minimumBotPiecesArray:
-                    print("selected: ", "coordinates:", coordinates, " | ", "array:", array)
-                    targetArray = str(array)
-                    targetArrayCoordinates = coordinates
-            print("--------")
-
-        
-            targetArray = eval(targetArray)
-            targetArrayCoordinates = eval(targetArrayCoordinates)
             targetArrayName = possibleArraysName[list(ArraysCoordinates.keys()).index(str(targetArrayCoordinates))] # Find the name of the line(horizontal, vertical, etc)
-
-            print("targetArray:", targetArray)
-            print("targetArrayCoordinates:", targetArrayCoordinates)
+            print("-" * 50)
+            print("targetArray:", targetArray, type(targetArray))
+            print("targetArrayCoordinates:", targetArrayCoordinates, type(targetArrayCoordinates))
             print("targetArrayName:",targetArrayName)
 
-        maximumLength = 0 
-        startingPoint = []
-        endingPoint = [] 
-        for arrayScanID in range(len(targetArray)):
-            if targetArray[arrayScanID] == 'O': # If it's Player's piece
-                # Certainly the one before is either empty or Bot piece, because the if statement did not pass through
-                # Step: Add the placement previous into "potentialBotPiecesPlacement" for future check 
-                # Step: Since the Player's piece would usually be connected together
-                # Step: Loop through the array and find where it ends 
+            print("Starting point:", startingPoint)
+            print("Ending point:", endingPoint)
 
-                # The array could be potentially have two or more different sections that consists of one or more Player's pieces
-                # The Objective is to find the section of Player's pieces with the greatest length
-                phaseLength = 0
-                for playerScanID in range(arrayScanID, len(targetArray)):
-                    if targetArray[playerScanID] == 'O':
-                        phaseLength += 1
-                    elif targetArray[playerScanID] == 'X' or targetArray[playerScanID] == ' ':
-                        if phaseLength > maximumLength: 
-                            maximumLength = phaseLength
-                            startingPoint = targetArrayCoordinates[arrayScanID]
-                            endingPoint = targetArrayCoordinates[playerScanID-1]
-                        break
-        print("maximumLength:", maximumLength)
-
-        # Now, given the two end-points of the Player's pieces
-        # Step: Determine the two coordinates the Bot could place it's piece on
-        BotInterceptionPoint1 = targetArrayCoordinates.index(startingPoint) - 1 # The point before the Player's connection begins
-        BotInterceptionPoint2 = targetArrayCoordinates.index(endingPoint) + 1 # The point after the Player's connection begin
-        potentialBotPiecesPlacement = [targetArrayCoordinates[BotInterceptionPoint1], targetArrayCoordinates[BotInterceptionPoint2]]
-        
-        if targetArrayCoordinates[BotInterceptionPoint1] == "X": 
-            # If starting point has been occupied by Bot's piece
-            # The otherside(end-point) should be empty
-            potentialBotPiecesPlacement.remove(targetArrayCoordinates[BotInterceptionPoint1]) # Remove from possible move
-        if targetArrayCoordinates[BotInterceptionPoint2] == "X":
-            potentialBotPiecesPlacement.remove(targetArrayCoordinates[BotInterceptionPoint2]) # Remove from possible move
-
-        print("potentialBotPiecesPlacement:", potentialBotPiecesPlacement)
-        # Objective: Determine the most opimized coordinate for Bot's piece placement
-        if len(potentialBotPiecesPlacement) == 1:
-            return potentialBotPiecesPlacement[0]
-        else:
-            choiceID = random.randint(0, 1)
-            return potentialBotPiecesPlacement[choiceID]
-            """
-            InterceptionArrays1 = [] # For starting point
-            InterceptionArrays2 = [] # For ending point
+            # Now, given the two end-points of the Player's pieces
+            # Step: Determine the two coordinates the Bot could place it's piece on
+            BotInterceptionPoint1 = targetArrayCoordinates.index(startingPoint) - 1 # The point before the Player's connection begins
+            BotInterceptionPoint2 = targetArrayCoordinates.index(endingPoint) + 1 # The point after the Player's connection begin
+            potentialBotPiecesPlacement = [targetArrayCoordinates[BotInterceptionPoint1], targetArrayCoordinates[BotInterceptionPoint2]]
             
-            possibleArraysName.remove(targetArrayName)
+            if targetArrayCoordinates[BotInterceptionPoint1] == "X": 
+                # If starting point has been occupied by Bot's piece
+                # The otherside(end-point) should be empty
+                potentialBotPiecesPlacement.remove(targetArrayCoordinates[BotInterceptionPoint1]) # Remove from possible move
+            if targetArrayCoordinates[BotInterceptionPoint2] == "X":
+                potentialBotPiecesPlacement.remove(targetArrayCoordinates[BotInterceptionPoint2]) # Remove from possible move
 
-            for checkPointID in range(3): # There will be three arrays to check once the current array is removed
-                InterceptionArrays1.append(Find_Coordinates_Of_Arrays(potentialBotPiecesPlacement[0], possibleArraysName[checkPointID]))
-                InterceptionArrays2.append(Find_Coordinates_Of_Arrays(potentialBotPiecesPlacement[1], possibleArraysName[checkPointID]))
-            """
+            # Objective: Determine the most opimized coordinate for Bot's piece placement
+            if len(potentialBotPiecesPlacement) == 1:
+                return potentialBotPiecesPlacement[0]
+            elif len(potentialBotPiecesPlacement) > 1:
+                choiceID = random.randint(0, 1)
+                print("potentialBotPiecesPlacement[choiceID]:",potentialBotPiecesPlacement[choiceID])
+                return potentialBotPiecesPlacement[choiceID]
+                """
+                InterceptionArrays1 = [] # For starting point
+                InterceptionArrays2 = [] # For ending point
+                
+                possibleArraysName.remove(targetArrayName)
+
+                for checkPointID in range(3): # There will be three arrays to check once the current array is removed
+                    InterceptionArrays1.append(Find_Coordinates_Of_Arrays(potentialBotPiecesPlacement[0], possibleArraysName[checkPointID]))
+                    InterceptionArrays2.append(Find_Coordinates_Of_Arrays(potentialBotPiecesPlacement[1], possibleArraysName[checkPointID]))
+                """
     
 def Find_Coordinates_Of_Arrays(PlayerCoordinate: list, ArrayType: str):
     # Array = [' ', ' ', ' ', ' ', 'X', 'O', 'O', ' ', ' ', 'X', ' ']
@@ -334,10 +325,4 @@ def Find_Coordinates_Of_Arrays(PlayerCoordinate: list, ArrayType: str):
         coordinateArray = sorted([list(x) for x in combined_set], key=lambda x: x[0])
     return coordinateArray
 
-
 Gamebot = GameBot()
-Gamebot.Identify_Player_Possible_Routes([' ', ' ', ' ', ' ', 'O', 'O', 'X', ' ', ' ', ' ', ' '],
-[' ', 'O', ' ', ' ', ' ', 'O', 'X', 'O', ' ', ' ', ' '],
-[' ', ' ', ' ', 'O', 'O', 'O', ' ', 'X', ' ', ' '],
-[' ', ' ', ' ', ' ', 'O', ' ', ' ', ' ', ' ', ' '],
-[4,5])
