@@ -124,7 +124,7 @@ def GameBot_Move(Game_Board: list, allArrays: list, playerCoordinate: list):
         connectionStreakValueDict[arrayCSVID] = maximumLength
         connectionStreakCoordinateDict[arrayCSVID] = [startingPoint, endingPoint]
 
-    availableArrays = []
+    availableArrays = {}
 
     # Check the arrays that the Player can actually connect 5 pieces
     # Meaning the connection-streak and the enarby empty slots adds up to 5
@@ -155,7 +155,7 @@ def GameBot_Move(Game_Board: list, allArrays: list, playerCoordinate: list):
             print("len(startScanIssueID) >= 1 and len(endScanIssueID) >= 1") 
 
             if endScanIssueID[0] - startScanIssueID[0] > 5:
-                availableArrays.append(currentArray)
+                availableArrays[str(currentArray)] = (endScanIssueID[0] - startScanIssueID[0]) - 1
             else:
                 print("currentArray1:",currentArray, " is not available")
 
@@ -166,7 +166,7 @@ def GameBot_Move(Game_Board: list, allArrays: list, playerCoordinate: list):
 
             if (endScanIssueID[0] - 1) >= 5:
                 # Enough empty slots to build 5 connections
-                availableArrays.append(currentArray)
+                availableArrays[str(currentArray)] = (endScanIssueID[0] - 1)
             else:
                 print("currentArray2:",currentArray, " is not available")
 
@@ -175,12 +175,12 @@ def GameBot_Move(Game_Board: list, allArrays: list, playerCoordinate: list):
             # The Player could only expand on it's right
             print("len(endScanIssueID) == 0")
 
-            if 10 - (startScanIssueID[0] + 1) >= 5:
-                availableArrays.append(currentArray)
+            if 10 - startScanIssueID[0] > 5:
+                availableArrays[str(currentArray)] = 10 - startScanIssueID[0]
         
         elif len(startScanIssueID) == 0 and len(endScanIssueID) == 0:
             print("# There are completely no Bot pieces at all on the current choosen array")
-            availableArrays.append(currentArray)
+            availableArrays[str(currentArray)] = len(currentArray) 
 
         print("-"*50)
 
@@ -193,16 +193,13 @@ GameBot_Move(
                   [' ', ' ', ' ', ' ', 'X', ' ', 'X', 'O', ' ', ' ', 'X'], 
                   [' ', ' ', ' ', ' ', 'X', 'O', 'O', 'O', ' ', ' ', ' '], 
                   [' ', ' ', ' ', 'X', 'O', 'O', 'O', ' ', ' ', ' ', ' '], 
-                  [' ', ' ', ' ', ' ', 'X', 'X', ' ', ' ', ' ', ' ', ' '], 
+                  [' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' ', ' ', ' '], 
                   [' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X', ' ', ' ', ' '], 
                   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
                   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
                   [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']],
     allArrays = [[' ', ' ', ' ', ' ', 'X', ' ', 'X', 'O', ' ', ' ', 'X'],
                  [' ', 'X', ' ', 'O', 'O', ' ', ' ', 'X', ' ', ' ', ' '],
-                 [' ', ' ', 'X', 'O', 'O', 'O', 'X', ' ', ' ', ' ', ' '],
+                 [' ', ' ', 'X', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' '],
                  [' ', ' ', ' ', 'O', ' ', ' ', ' ']],
     playerCoordinate = [3,7])
-
-
-
