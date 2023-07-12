@@ -139,6 +139,11 @@ def GameBot_Move(Game_Board: list, allArrays: list, playerCoordinate: list):
         endingPointInd = ArrayCoordinates[str(currentArray)].index(endingPoint)
 
         playerRemainingPieceToWin = 5 - connectionStreakValueDict[arraySSID] 
+
+        """ 
+        The Player would have between 1 - 3 pieces on an array for most of the time
+        
+        """
         
         print("currentArray:",currentArray)
         print("startingPoint:",startingPoint, "startingPointInd:", startingPointInd)
@@ -203,3 +208,38 @@ GameBot_Move(
                  [' ', ' ', 'X', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' '],
                  [' ', ' ', ' ', 'O', ' ', ' ', ' ']],
     playerCoordinate = [3,7])
+
+"""
+Program Output: 
+Allarrays: [[' ', ' ', ' ', ' ', 'X', ' ', 'X', 'O', ' ', ' ', 'X'], [' ', 'X', ' ', 'O', 'O', ' ', ' ', 'X', ' ', ' ', ' '], [' ', ' ', 'X', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', 'O', ' ', ' ', ' ']]
+currentArray: [' ', ' ', ' ', ' ', 'X', ' ', 'X', 'O', ' ', ' ', 'X']
+startingPoint: [3, 7] startingPointInd: 7
+endingPoint: [3, 7] endingPointInd: 7
+playerRemainingPieceToWin: 4
+startScanIssueID: [6, 4] endScanIssueID: [10]
+len(startScanIssueID) >= 1 and len(endScanIssueID) >= 1
+currentArray1: [' ', ' ', ' ', ' ', 'X', ' ', 'X', 'O', ' ', ' ', 'X']  is not available
+--------------------------------------------------
+currentArray: [' ', 'X', ' ', 'O', 'O', ' ', ' ', 'X', ' ', ' ', ' ']
+startingPoint: [3, 7] startingPointInd: 3
+endingPoint: [4, 7] endingPointInd: 4
+playerRemainingPieceToWin: 3
+startScanIssueID: [1] endScanIssueID: [7]
+len(startScanIssueID) >= 1 and len(endScanIssueID) >= 1
+--------------------------------------------------
+currentArray: [' ', ' ', 'X', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' ']
+startingPoint: [3, 7] startingPointInd: 3
+endingPoint: [5, 5] endingPointInd: 5
+playerRemainingPieceToWin: 2
+startScanIssueID: [2] endScanIssueID: []
+len(endScanIssueID) == 0
+--------------------------------------------------
+currentArray: [' ', ' ', ' ', 'O', ' ', ' ', ' ']
+startingPoint: [3, 7] startingPointInd: 3
+endingPoint: [3, 7] endingPointInd: 3
+playerRemainingPieceToWin: 4
+startScanIssueID: [] endScanIssueID: []
+# There are completely no Bot pieces at all on the current choosen array
+--------------------------------------------------
+availableArrays: {"[' ', 'X', ' ', 'O', 'O', ' ', ' ', 'X', ' ', ' ', ' ']": 5, "[' ', ' ', 'X', 'O', 'O', 'O', ' ', ' ', ' ', ' ', ' ']": 8, "[' ', ' ', ' ', 'O', ' ', ' ', ' ']": 7}
+"""
